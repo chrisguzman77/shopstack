@@ -1,0 +1,65 @@
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  auth:
+    build:
+      context: ..
+      dockerfile: services/auth/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/auth_db
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: dev_secret_change_me
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8001:8001"
+
+  orders:
+    build:
+      context: ..
+      dockerfile: services/orders/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/orders_db
+      REDIS_URL: redis://redis:6379/0
+      AUTH_SERVICE_URL: http://auth:8001
+    depends_on:
+      - postgres
+      - redis
+      - auth
+    ports:
+      - "8002:8002"
+
+  notifications:
+    build:
+      context: ..
+      dockerfile: services/notifications/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/notifications_db
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+
+  gateway:
+    build:
+      context: ..
+      dockerfile: services/gateway/Dockerfile
+    depends_on:
+      - auth
+      - orders
+    ports:
+      - "8000:8000"
