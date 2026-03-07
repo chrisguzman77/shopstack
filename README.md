@@ -1,5 +1,5 @@
-#ShopStack
-##A Production-Ready Microservices E-Commerce Backend
+# ShopStack
+## A Production-Ready Microservices E-Commerce Backend
 
 ShopStack is a microservices-based backend platform that demonstrates modern distributed system architecture using FastAPI, PostgreSQL, Redis Streams, Docker, and GitHub Actions CI.
 ---
@@ -25,7 +25,7 @@ This project is designed to showcase production-grade backend architecture, DevO
 
 ---
 
-##Architecture Overview
+## Architecture Overview
 
 ShopStack uses a service-oriented architecture with independently deployable services.
 
