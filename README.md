@@ -268,170 +268,194 @@ shopstack/
 └── README.md
 
 ```
-Running the System
+
+## Running the System
 1 Install dependencies
 
 Install uv:
-
+```
 pip install uv
+```
 2 Start infrastructure
 
 From project root:
-
+```
 cd infra
 docker compose up --build
-
+```
 Services will start:
-
+```
 Gateway        localhost:8000
 Auth           localhost:8001
 Orders         localhost:8002
 Postgres       localhost:5432
 Redis          localhost:6379
-API Usage Example
-Register user
+```
+--- 
+
+## API Usage Example
+### Register user
+```
 curl -X POST http://localhost:8000/auth/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"Password123!"}'
-Login
+```
+### Login
+```
 curl -X POST http://localhost:8000/auth/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"Password123!"}'
-
-Returns JWT:
-
+```
+### Returns JWT:
+```
 {
   "access_token": "...",
   "token_type": "bearer"
 }
-Create Order
+```
+### Create Order
+```
 curl -X POST http://localhost:8000/orders/orders \
   -H "Authorization: Bearer <TOKEN>" \
   -H "Idempotency-Key: abc123" \
   -H "Content-Type: application/json" \
   -d '{"currency":"USD","items":[{"sku":"ABC","name":"Widget","qty":2,"unit_price":500}]}'
-Pay Order
+```
+### Pay Order
+```
 curl -X POST http://localhost:8000/orders/orders/{order_id}/pay \
   -H "Authorization: Bearer <TOKEN>"
-Testing
+```
+### Testing
 
 Run tests inside a service:
-
+```
 cd services/auth
 uv run pytest -q
-
+```
 Tests exist for:
-
+```
 auth
 orders
 gateway
 notifications
-Linting
+```
+### Linting
 
 Run Ruff:
-
+```
 uv run ruff check .
 uv run ruff format .
-CI Pipeline
+```
+### CI Pipeline
 
 GitHub Actions performs:
 
-Dependency installation
+1. Dependency installation
 
-Ruff formatting check
+2. Ruff formatting check
 
-Ruff lint check
+3. Ruff lint check
 
-Pytest execution
+4. Pytest execution
 
 Workflow file:
-
+```
 .github/workflows/ci.yml
-Key Engineering Concepts Demonstrated
-Microservices Architecture
+```
+---
+## Key Engineering Concepts Demonstrated
+### Microservices Architecture
 
 Services are independently deployable and loosely coupled.
 
-API Gateway Pattern
+### API Gateway Pattern
 
 All traffic enters through a single gateway.
 
 Benefits:
 
-simplified client integration
+- simplified client integration
 
-centralized routing
+- centralized routing
 
-security enforcement
+- security enforcement
 
-Event-Driven Architecture
+### Event-Driven Architecture
 
 Orders emit events to Redis Streams.
 
 Example:
-
+```
 order_created
 order_paid
-
+```
 Notifications service consumes events asynchronously.
 
-Idempotent APIs
+### Idempotent APIs
 
 Order creation requires:
-
+```
 Idempotency-Key
-
+```
 This prevents duplicate orders during retries.
 
-Rate Limiting
+### Rate Limiting
 
 Auth login endpoints are protected with:
-
+```
 Redis-based rate limiter
-Observability
+```
+### Observability
 
 All services include:
-
+```
 Request ID middleware
 structured logging
-Security Considerations
+```
+--- 
 
-bcrypt password hashing
+## Security Considerations
 
-JWT authentication
+- bcrypt password hashing
 
-rate limiting
+- JWT authentication
 
-request validation
+- rate limiting
 
-centralized gateway
+- request validation
 
-Future Improvements
+- centralized gateway
+---
+## Future Improvements
 
 Possible extensions:
 
-payment microservice
+- payment microservice
 
-email delivery system
+- email delivery system
 
-distributed tracing (OpenTelemetry)
+- distributed tracing (OpenTelemetry)
 
-Kubernetes deployment
+- Kubernetes deployment
 
-service discovery
+- service discovery
 
-API versioning
+- API versioning
 
-caching layer
+- caching layer
+- GraphQL gateway
 
-GraphQL gateway
+---
 
-License
+## License
 
 MIT License
 
-Author
+---
+
+## Author
 
 Christopher Guzman
-Computer Science — Cyber Operations
+Computer Science and Cyber Operations
 Augusta University
