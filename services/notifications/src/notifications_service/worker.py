@@ -38,7 +38,7 @@ async def handle_message(db: AsyncSession, payload: dict) -> None:
     n = Notification(
         user_id=user_id,
         channel="EMAIL",
-        template = template_for(event_type),
+        template=template_for(event_type),
         payload=payload,
         status="SENT",
     )
@@ -62,8 +62,8 @@ async def run_loop() -> None:
         if not resp:
             continue
 
-        for (_stream, messages) in resp:
-            for(msg_id, fields) in messages:
+        for _stream, messages in resp:
+            for msg_id, fields in messages:
                 raw = fields.get("payload")
                 try:
                     payload = json.loads(raw)
@@ -76,8 +76,9 @@ async def run_loop() -> None:
                     # basic dead-letter strategy
                     await r.xadd("orders.deadletter", {"payoad": raw or "{}"})
                     await r.xack(settings.stream_name, settings.group_name, msg_id)
-        
+
         await asyncio.sleep(0)
 
-if __name__ =="__main__":
+
+if __name__ == "__main__":
     asyncio.run(run_loop())
