@@ -16,7 +16,10 @@ dependencies = [
 ]
 
 [tool.uv]
-dev-dependencies = ["ruff>=0.6"]
+dev-dependencies = [
+  "ruff>=0.6",
+  "pytest>=8.0",
+  ]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
