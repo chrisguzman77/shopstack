@@ -29,6 +29,8 @@ This project is designed to showcase production-grade backend architecture, DevO
 
 ShopStack uses a service-oriented architecture with independently deployable services.
 
+```
+
                 ┌──────────────────┐
                 │      Client      │
                 │ (Web / Mobile)   │
@@ -54,7 +56,7 @@ ShopStack uses a service-oriented architecture with independently deployable ser
 
    PostgreSQL       PostgreSQL         Redis
    auth_db          orders_db          Event Bus
-
+```
 ---
    
 ## Microservices
@@ -73,12 +75,12 @@ Responsibilities:
 - Health checks
 
 Endpoints:
-
+```
 /auth/*
 /orders/*
 /docs
 /health
-
+```
 Technology:
 
 - FastAPI
@@ -104,12 +106,12 @@ Features:
 - Structured error responses
 
 Endpoints:
-
+```
 POST /auth/register
 POST /auth/login
 GET  /auth/verify
 GET  /health
-
+```
 Security:
 
 - bcrypt password hashing
@@ -121,8 +123,9 @@ Security:
 - input validation via Pydantic
 
 Database:
-
+```
 users
+```
 
 ### Orders Service
 
@@ -130,64 +133,65 @@ Handles all order lifecycle operations.
 
 Features:
 
-Create order
+- Create order
 
-Idempotent order creation
+- Idempotent order creation
 
-List user orders
+- List user orders
 
-Retrieve order
+- Retrieve order
 
-Process payments
+- Process payments
 
-Emit domain events
+- Emit domain events
 
 Endpoints:
-
+```
 POST   /orders
 GET    /orders
 GET    /orders/{id}
 POST   /orders/{id}/pay
 GET    /health
-
+```
 Database:
-
+```
 orders
 order_items
 idempotency_keys
-Notifications Worker
+```
+### Notifications Worker
 
 Background event processor.
 
 Consumes events from Redis Streams.
 
 Events:
-
+```
 order_created
 order_paid
-
+```
 Responsibilities:
 
-Email notifications
+- Email notifications
 
-Event processing
+- Event processing
 
-Background job handling
+- Background job handling
 
 Technology:
 
-Redis Streams
+- Redis Streams
 
-Async worker loop
+- Async worker loop
 
-Consumer groups
+- Consumer groups
 
-Shared Package
+### Shared Package
 
 The shared module contains reusable components used across services.
 
 Includes:
-
+```
 shopstack_shared/
     observability/
         logging.py
@@ -198,31 +202,36 @@ shopstack_shared/
 
     clients/
         auth_client.py
-
+```
 Purpose:
 
-Avoid duplicate code
+- Avoid duplicate code
 
-Maintain consistent logging
+- Maintain consistent logging
 
-Shared API contracts
+- Shared API contracts
 
-Cross-service clients
+- Cross-service clients
 
-Technology Stack
-Layer	Technology
-API Framework	FastAPI
-Language	Python 3.12
-Database	PostgreSQL
-Message Bus	Redis Streams
-ORM	SQLAlchemy (Async)
-Migrations	Alembic
-Containerization	Docker
-Dev Environment	uv
-Linting	Ruff
-Testing	Pytest
-CI/CD	GitHub Actions
-Project Structure
+---
+
+## Technology Stack
+Layer	| Technology
+API Framework	| FastAPI
+Language |	Python 3.12
+Database	| PostgreSQL
+Message Bus	| Redis Streams
+ORM	| SQLAlchemy (Async)
+Migrations	| Alembic
+Containerization	|Docker
+Dev Environment	| uv
+Linting	| Ruff
+Testing	| Pytest
+CI/CD	| GitHub Actions
+
+---
+
+## Project Structure
 shopstack/
 │
 ├── services/
