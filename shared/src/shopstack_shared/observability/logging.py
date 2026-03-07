@@ -17,9 +17,9 @@ class JsonFormatter(logging.Formatter):
         if record.exc_info:
             payload["exc_info"] = self.formatException(record.exc_info)
         return json.dumps(payload, ensure_ascii=False)
-    
 
-def configure_logging(level: str= "INFO") -> None:
+
+def configure_logging(level: str = "INFO") -> None:
     root = logging.getLogger()
     root.setLevel(level)
     handler = logging.StreamHandler()
