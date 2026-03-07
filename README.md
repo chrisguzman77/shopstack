@@ -1,29 +1,31 @@
-ShopStack
-A Production-Ready Microservices E-Commerce Backend
+#ShopStack
+##A Production-Ready Microservices E-Commerce Backend
 
 ShopStack is a microservices-based backend platform that demonstrates modern distributed system architecture using FastAPI, PostgreSQL, Redis Streams, Docker, and GitHub Actions CI.
-
+---
 The platform implements core e-commerce functionality including:
 
-Authentication
+- Authentication
 
-Order management
+- Order management
 
-Event-driven notifications
+- Event-driven notifications
 
-API gateway routing
+- API gateway routing
 
-Distributed rate limiting
+- Distributed rate limiting
 
-Idempotent request handling
+- Idempotent request handling
 
-Observability middleware
+- Observability middleware
 
-Containerized infrastructure
+- Containerized infrastructure
 
 This project is designed to showcase production-grade backend architecture, DevOps practices, and scalable system design.
 
-Architecture Overview
+---
+
+##Architecture Overview
 
 ShopStack uses a service-oriented architecture with independently deployable services.
 
@@ -52,20 +54,23 @@ ShopStack uses a service-oriented architecture with independently deployable ser
 
    PostgreSQL       PostgreSQL         Redis
    auth_db          orders_db          Event Bus
-Microservices
-API Gateway
+
+---
+   
+##Microservices
+###API Gateway
 
 Entry point for all clients.
 
 Responsibilities:
 
-Route requests to services
+- Route requests to services
 
-Provide unified API surface
+- Provide unified API surface
 
-Centralized documentation
+- Centralized documentation
 
-Health checks
+- Health checks
 
 Endpoints:
 
@@ -76,27 +81,27 @@ Endpoints:
 
 Technology:
 
-FastAPI
+- FastAPI
 
-httpx proxy forwarding
+- httpx proxy forwarding
 
-Auth Service
+###Auth Service
 
 Handles authentication and authorization.
 
 Features:
 
-User registration
+- User registration
 
-Login with JWT
+- Login with JWT
 
-Password hashing (bcrypt)
+- Password hashing (bcrypt)
 
-Redis rate limiting
+- Redis rate limiting
 
-Token verification
+- Token verification
 
-Structured error responses
+- Structured error responses
 
 Endpoints:
 
@@ -107,13 +112,13 @@ GET  /health
 
 Security:
 
-bcrypt password hashing
+- bcrypt password hashing
 
-JWT tokens
+- JWT tokens
 
-Redis login rate limiting
+- Redis login rate limiting
 
-input validation via Pydantic
+- input validation via Pydantic
 
 Database:
 
