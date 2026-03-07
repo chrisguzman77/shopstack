@@ -78,4 +78,6 @@ async def proxy_orders(path: str, request: Request) -> Response:
 
 @app.exception_handler(Exception)
 async def any_error(_, exc: Exception) -> JSONResponse:
-    return JSONResponse(status_code=500, content={"error": {"code": "GATEWAY_ERROR", "message": str(exc)}})
+    return JSONResponse(
+        status_code=500, content={"error": {"code": "GATEWAY_ERROR", "message": str(exc)}}
+    )
