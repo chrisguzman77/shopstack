@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 
 from auth_service.api import app
