@@ -26,28 +26,27 @@ jobs:
       - name: Install uv
         run: pip install uv
 
-      - name: Install deps
+      - name: Create venv and install deps
         working-directory: ${{ matrix.service }}
         run: |
           uv venv
-          . .venv/bin/activate
-          uv sync || true
+          uv sync --dev
           uv pip install -e .
+
+      - name: Install shared into service env
+        if: matrix.service != 'shared'
+        working-directory: ${{ matrix.service }}
+        run: |
+          uv pip install -e ../../shared
 
       - name: Ruff format check
         working-directory: ${{ matrix.service }}
-        run: |
-          . .venv/bin/activate
-          uv run ruff format --check .
+        run: uv run ruff format --check .
 
       - name: Ruff lint check
         working-directory: ${{ matrix.service }}
-        run: |
-          . .venv/bin/activate
-          uv run ruff check .
+        run: uv run ruff check .
 
       - name: Pytest
         working-directory: ${{ matrix.service }}
-        run: |
-          . .venv/bin/activate
-          uv run pytest -q
+        run: uv run pytest -q
