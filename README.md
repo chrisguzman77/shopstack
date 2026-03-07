@@ -218,21 +218,23 @@ Purpose:
 ## Technology Stack
  Layer	| Technology 
  |----|----|
-API Framework	| FastAPI 
-Language |	Python 3.12 
- Database	| PostgreSQL
- Message Bus	| Redis Streams 
- ORM	| SQLAlchemy (Async) 
- Migrations	| Alembic 
- Containerization	| Docker 
- Dev Environment	| uv 
- Linting	| Ruff 
- Testing	| Pytest 
-CI/CD	| GitHub Actions 
+API Framework:	| FastAPI 
+Language: |	Python 3.12 
+ Database:	| PostgreSQL
+ Message Bus:	| Redis Streams 
+ ORM:	| SQLAlchemy (Async) 
+ Migrations:	| Alembic 
+ Containerization:	| Docker 
+ Dev Environment:	| uv 
+ Linting:	| Ruff 
+ Testing:	| Pytest 
+CI/CD:	| GitHub Actions 
  
 ---
 
 ## Project Structure
+
+```
 shopstack/
 │
 ├── services/
@@ -264,6 +266,8 @@ shopstack/
 │   └── workflows/ci.yml
 │
 └── README.md
+
+```
 Running the System
 1 Install dependencies
 
