@@ -4,9 +4,8 @@ import logging
 import uuid
 
 import redis.asyncio as redis
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from shopstack_shared.observability.logging import configure_logging
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .config import settings
 from .db import SessionLocal
@@ -63,7 +62,7 @@ async def run_loop() -> None:
         if not resp:
             continue
 
-        for (stream, messages) in resp:
+        for (_stream, messages) in resp:
             for(msg_id, fields) in messages:
                 raw = fields.get("payload")
                 try:

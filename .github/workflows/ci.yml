@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - shared
+          - services/auth
+          - services/orders
+          - services/notifications
+          - services/gateway
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install deps
+        working-directory: ${{ matrix.service }}
+        run: |
+          uv venv
+          . .venv/bin/activate
+          uv sync || true
+          uv pip install -e .
+
+      - name: Ruff format check
+        working-directory: ${{ matrix.service }}
+        run: |
+          . .venv/bin/activate
+          uv run ruff format --check .
+
+      - name: Ruff lint check
+        working-directory: ${{ matrix.service }}
+        run: |
+          . .venv/bin/activate
+          uv run ruff check .
+
+      - name: Pytest
+        working-directory: ${{ matrix.service }}
+        run: |
+          . .venv/bin/activate
+          uv run pytest -q

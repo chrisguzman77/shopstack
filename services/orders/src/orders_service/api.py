@@ -5,13 +5,12 @@ from typing import Any
 import redis.asyncio as redis
 from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from shopstack_shared.clients.auth_client import AuthClient
 from shopstack_shared.observability.logging import configure_logging
 from shopstack_shared.observability.request_id import RequestIdMiddleware
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .config import settings
 from .db import SessionLocal
@@ -48,8 +47,8 @@ async def require_user(authorization: str | None = Header(default=None)) -> dict
     client = AuthClient(settings.auth_service_url)
     try:
         principal = await client.verify(token)
-    except Exception:
-        raise error("INVALID_TOKEN", "Token invalid or expired", 401)
+    except Exception as err:
+        raise error("INVALID_TOKEN", "Token invalid or expired", 401) from err
     if not principal.get("valid"):
         raise error("INVALID_TOKEN", "Token invalid or expired", 401)
     return principal
@@ -86,12 +85,20 @@ async def create_order(
     total = sum(i.qty * i.unit_price for i in payload.items)
 
     # if exists, return existing
-    q = await db.execute(select(Order).where(Order.user_id == user_id, Order.idempotency_key == idem_key))
+    q = await db.execute(
+        select(Order).where(Order.user_id == user_id, Order.idempotency_key == idem_key)
+    )
     existing = q.scalar_one_or_none()
     if existing:
-        return {"id": str(existing.id), "status": existing.status, "total_amount": existing.total_amount}
+        return {
+            "id": str(existing.id),
+            "status": existing.status,
+            "total_amount": existing.total_amount,
+        }
 
-    order = Order(user_id=user_id, total_amount=total, currency=payload.currency, idempotency_key=idem_key)
+    order = Order(
+        user_id=user_id, total_amount=total, currency=payload.currency, idempotency_key=idem_key
+    )
     for i in payload.items:
         order.items.append(OrderItem(sku=i.sku, name=i.name, qty=i.qty, unit_price=i.unit_price))
 
@@ -101,7 +108,9 @@ async def create_order(
     except IntegrityError:
         await db.rollback()
         # race condition fallback: re-fetch
-        q2 = await db.execute(select(Order).where(Order.user_id == user_id, Order.idempotency_key == idem_key))
+        q2 = await db.execute(
+            select(Order).where(Order.user_id == user_id, Order.idempotency_key == idem_key)
+        )
         o2 = q2.scalar_one()
         return {"id": str(o2.id), "status": o2.status, "total_amount": o2.total_amount}
 
@@ -115,9 +124,19 @@ async def list_orders(
     principal: dict[str, Any] = Depends(require_user),
 ) -> list[dict[str, Any]]:
     user_id = uuid.UUID(principal["user_id"])
-    q = await db.execute(select(Order).where(Order.user_id == user_id).order_by(Order.created_at.desc()))
+    q = await db.execute(
+        select(Order).where(Order.user_id == user_id).order_by(Order.created_at.desc())
+    )
     orders = q.scalars().all()
-    return [{"id": str(o.id), "status": o.status, "total_amount": o.total_amount, "currency": o.currency} for o in orders]
+    return [
+        {
+            "id": str(o.id),
+            "status": o.status,
+            "total_amount": o.total_amount,
+            "currency": o.currency,
+        }
+        for o in orders
+    ]
 
 
 @router.get("/orders/{order_id}")
@@ -138,7 +157,10 @@ async def get_order(
         "status": order.status,
         "total_amount": order.total_amount,
         "currency": order.currency,
-        "items": [{"sku": it.sku, "name": it.name, "qty": it.qty, "unit_price": it.unit_price} for it in order.items],
+        "items": [
+            {"sku": it.sku, "name": it.name, "qty": it.qty, "unit_price": it.unit_price}
+            for it in order.items
+        ],
     }
 
 
@@ -166,7 +188,11 @@ async def pay_order(
         await publish_event(
             r,
             event_type="order.paid",
-            data={"order_id": str(order.id), "user_id": str(order.user_id), "payment_id": str(payment_id)},
+            data={
+                "order_id": str(order.id),
+                "user_id": str(order.user_id),
+                "payment_id": str(payment_id),
+            },
         )
         return {"id": str(order.id), "status": order.status, "payment_id": str(payment_id)}
     else:

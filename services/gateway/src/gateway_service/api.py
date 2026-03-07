@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 import httpx
 from fastapi import FastAPI, Request, Response
-from starlette.responses import JSONResponse
-
 from shopstack_shared.observability.logging import configure_logging
 from shopstack_shared.observability.request_id import RequestIdMiddleware
+from starlette.responses import JSONResponse
 
 AUTH_URL = "http://auth:8001"
 ORDERS_URL = "http://orders:8002"

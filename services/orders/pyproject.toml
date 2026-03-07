@@ -31,3 +31,19 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/env.py" = ["I001"]
+"alembic/versions/*.py" = ["I001", "UP007", "UP035"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

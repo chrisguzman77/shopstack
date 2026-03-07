@@ -1,4 +1,5 @@
 import os
+
 from pydantic import BaseModel
 
 
@@ -26,7 +27,7 @@ class Settings(BaseModel):
     )
 
     # Consumer group settings
-    consumer_group: str = os.getenv(
+    group_name: str = os.getenv(
         "NOTIFICATIONS_GROUP",
         "notifications",
     )

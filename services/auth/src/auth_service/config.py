@@ -1,5 +1,7 @@
 import os
+
 from pydantic import BaseModel
+
 
 class Settings(BaseModel):
     app_name: str = "auth"
@@ -9,5 +11,6 @@ class Settings(BaseModel):
     jwt_secret: str = os.getenv("JWT_SECRET", "dev_secret_change_me")
     jwt_algorithm: str = "HS256"
     jwt_exp_minutes: int = int(os.getenv("JWT_EXP_MINUTES", "30"))
+
 
 settings = Settings()

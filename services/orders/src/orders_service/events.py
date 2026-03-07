@@ -2,9 +2,7 @@ import json
 from typing import Any
 
 import redis.asyncio as redis
-
 from shopstack_shared.contracts.events import EventEnvelope
-
 
 STREAM_NAME = "orders.events"
 

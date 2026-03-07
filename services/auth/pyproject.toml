@@ -11,6 +11,7 @@ dependencies = [
   "alembic>=1.13",
   "python-jose[cryptography]>=3.3",
   "passlib[bcrypt]>=1.7",
+  "bcrypt==4.0.1",
   "redis>=5.0",
   "httpx>=0.27",
   "pytest>=8.0",
@@ -33,3 +34,19 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/env.py" = ["I001"]
+"alembic/versions/*.py" = ["I001", "UP007", "UP035"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

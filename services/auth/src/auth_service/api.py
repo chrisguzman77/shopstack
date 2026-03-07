@@ -1,17 +1,15 @@
 from __future__ import annotations
 
 from typing import Any
-from uuid import UUID
 
 import redis.asyncio as redis
 from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException, Request, Response
 from pydantic import BaseModel, EmailStr
+from shopstack_shared.observability.logging import configure_logging
+from shopstack_shared.observability.request_id import RequestIdMiddleware
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from shopstack_shared.observability.logging import configure_logging
-from shopstack_shared.observability.request_id import RequestIdMiddleware
 
 from .config import settings
 from .db import SessionLocal
@@ -64,9 +62,9 @@ async def register(payload: RegisterIn, db: AsyncSession = Depends(get_db)) -> d
     db.add(user)
     try:
         await db.commit()
-    except IntegrityError:
+    except IntegrityError as err:
         await db.rollback()
-        raise error("EMAIL_TAKEN", "Email already registered", 409)
+        raise error("EMAIL_TAKEN", "Email already registered", 409) from err
     await db.refresh(user)
     return {"id": str(user.id), "email": user.email}
 
@@ -85,7 +83,9 @@ async def login(
 
     # Rate limit: by IP and by email
     rl_ip = await limiter.hit(key=f"rl:auth:login:ip:{ip}", limit=20, window_seconds=60)
-    rl_email = await limiter.hit(key=f"rl:auth:login:email:{payload.email}", limit=10, window_seconds=60)
+    rl_email = await limiter.hit(
+        key=f"rl:auth:login:email:{payload.email}", limit=10, window_seconds=60
+    )
 
     # set headers (nice touch)
     response.headers["X-RateLimit-Remaining-IP"] = str(rl_ip.remaining)
@@ -119,8 +119,8 @@ async def verify(authorization: str | None = Header(default=None)) -> dict[str, 
             "email": claims.get("email"),
             "roles": claims.get("roles", []),
         }
-    except ValueError:
-        raise error("INVALID_TOKEN", "Token invalid or expired", 401)
+    except ValueError as err:
+        raise error("INVALID_TOKEN", "Token invalid or expired", 401) from err
 
 
 app.include_router(router)
