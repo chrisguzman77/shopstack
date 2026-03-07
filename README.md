@@ -123,7 +123,8 @@ Security:
 Database:
 
 users
-Orders Service
+
+### Orders Service
 
 Handles all order lifecycle operations.
 
