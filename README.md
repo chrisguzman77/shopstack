@@ -57,8 +57,8 @@ ShopStack uses a service-oriented architecture with independently deployable ser
 
 ---
    
-##Microservices
-###API Gateway
+## Microservices
+### API Gateway
 
 Entry point for all clients.
 
@@ -85,7 +85,7 @@ Technology:
 
 - httpx proxy forwarding
 
-###Auth Service
+### Auth Service
 
 Handles authentication and authorization.
 
